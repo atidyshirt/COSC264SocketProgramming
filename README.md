@@ -1,9 +1,8 @@
 ---
 title: Socket Programming Assignment
-author: Jordan Pyott
-Publish: University of Canterbury
-StudentID:  87433186
-Due: August 16, 2020
+author: Jordan Pyott; 87433186
+date: August 16, 2020
+comment: University of Canterbury
 geometry: margin=0.5cm
 ---
 
