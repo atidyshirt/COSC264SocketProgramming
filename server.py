@@ -11,8 +11,6 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
     with the --verbose flag in order to see the options and arguments, run `server.py --help` for more information`.
     """
 
-
-# SERVERSIDE FUNCTIONS
     def check_port(PORT):
         """ Checks the port and makes sure it complies to requirements (1024 - 64000) """
         if PORT < 1024 or PORT > 64000:
@@ -29,7 +27,7 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
         PacketType = int.from_bytes(info[1], 'big')
         RequestType = int.from_bytes(info[2], 'big')
         if MagicNo != 0x497E:
-            print("Magic wrong")
+            return False
         if PacketType != 0x0001:
             return False
         if RequestType != 0x0001 and RequestType != 0x0002:
@@ -147,9 +145,9 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
     """
     IP = socket.gethostbyname('localhost')
 
-    s_english = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # set to grab IPv4 and socket_stream is to create TCP protocols
-    s_maori = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # set to grab IPv4 and socket_stream is to create TCP protocols
-    s_german = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # set to grab IPv4 and socket_stream is to create TCP protocols
+    s_english = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s_maori = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s_german = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     server_sockets = [[s_english, PORT_english], [s_maori, PORT_maori], [s_german, PORT_german]]
 
@@ -162,7 +160,7 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
 
     sockets = [s_english, s_maori, s_german]
 
-    while True: # while there is a connection
+    while True:
         try:
             read, write, exception = select.select(sockets, [], [])
             for s in read:
@@ -186,13 +184,13 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
                     s.sendto(bytes(msg))
                     s.close()
         except KeyboardInterrupt:
-                print ("")
-                print ("Closing Sockets...")
-                for s in sockets:
-                    s.close()
-                print("Server Closed")
-                sys.exit()
-                break
+            print("")
+            print("Closing Sockets...")
+            for s in sockets:
+                s.close()
+            print("Server Closed")
+            sys.exit()
+            break
 
 
 def Main():

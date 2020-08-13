@@ -125,7 +125,7 @@ def start_client(DATE, HOST, PORT, verbose):
             print("The `date` parameter must be set to either `date` or `time`")
             return -1
         else:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # set to grab IPv4 and socket_stream is to create TCP protocols
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.settimeout(1)
             s.sendto(request_packet, (IP, PORT))
 
@@ -170,8 +170,6 @@ def Main():
     else:
         start_client(args.MSG, args.HOST, args.PORT, verbose=False)
 
+
 if __name__ == "__main__":
     Main()
-
-
-

@@ -74,7 +74,7 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
         PacketType = int.from_bytes(info[1], 'big')
         RequestType = int.from_bytes(info[2], 'big')
         if MagicNo != 0x497E:
-            print("Magic wrong")
+           return False
         if PacketType != 0x0001:
             return False
         if RequestType != 0x0001 and RequestType != 0x0002:
