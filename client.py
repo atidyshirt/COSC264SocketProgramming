@@ -6,7 +6,7 @@ def start_client(DATE, HOST, PORT, verbose):
     try:
         IP = socket.gethostbyname(HOST)
     except socket.gaierror:
-        print(f"Hostname not found: Check {HOST} is correct")
+        print(f"Hostname not found: Could not connect to ({HOST}:{PORT})")
         return -1
 
     def checkInputs(DATE, IP, PORT):
@@ -132,11 +132,11 @@ def start_client(DATE, HOST, PORT, verbose):
                         complete_message += msg
 
                     except socket.timeout:
-                        print("Client socket timeout")
+                        print(f"Client timeout: Could not connect to ({HOST}:{PORT})")
                         break
 
                     except socket.error:
-                        print("Client socket timeout")
+                        print(f"Client timeout: Could not connect to ({HOST}:{PORT})")
                         break
 
                     result = decrypt_message(complete_message)
