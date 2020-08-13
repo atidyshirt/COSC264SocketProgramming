@@ -1,20 +1,13 @@
-<center>
-
-# Socket Programming Assessment - COSC264
-
-University of Canterbury
-
-Due: August 16, 2020
-
-Name:       Jordan Pyott
-
+---
+title: Socket Programming Assignment
+author: Jordan Pyott
+Publish: University of Canterbury
 StudentID:  87433186
-
-</center>
-
+Due: August 16, 2020
+geometry: margin=0.5cm
 ---
 
-### Usage 
+# Usage 
 
 **Running Server**
 
@@ -46,9 +39,7 @@ OPTIONS [-] PREFIX
     -v --verbose   : Shows clients connecting to server
 ```
 
---- 
-
-### Server Source Code
+# Server Source Code
 
 ```python
 import socket
@@ -59,15 +50,17 @@ import datetime
 
 def start_server(PORT_english, PORT_maori, PORT_german, verbose):
     """
-    This function is in essence the main function, it has many sub-functions that are used to get certain values to parse into the
-    body of this function, at the bottom of this function you will find the server information, note you can start this function
-    with the --verbose flag in order to see the options and arguments, run `server.py --help` for more information`.
+    This function is in essence the main function, it has many sub-functions 
+    that are used to get certain values to parse into the body of this function, 
+    at the bottom of this function you will find the server information, note you 
+    can start this function with the --verbose flag in order to see the options and 
+    arguments, run `server.py --help` for more information`.
     """
 
-
-# SERVERSIDE FUNCTIONS
     def check_port(PORT):
-        """ Checks the port and makes sure it complies to requirements (1024 - 64000) """
+        """ 
+        Checks the port and makes sure it complies to requirements (1024 - 64000) 
+        """
         if PORT < 1024 or PORT > 64000:
             print("The Port number is not within specified range (1024 - 64000)")
             return False
@@ -105,9 +98,12 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
         Allows user to form the packet the `date` string to be returned to the client
         """
         months = {
-            'english': ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-            'maori': ["Kohitatea", "Hui-tanguru", "Poutu ̄-te-rangi", "Paenga-whawha", "Haratua", "Pipiri", "Hongongoi", "Here-turi-koka", "Mahuru", "Whiringa-a-nuku", "Whiringa-a-rangi", "Hakihea"],
-            'german': ["Januar", "Februar", "Marz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
+            'english': ["January", "February", "March", "April", "May", "June", "July", 
+            "August", "September", "October", "November", "December"],
+            'maori': ["Kohitatea", "Hui-tanguru", "Poutu ̄-te-rangi", "Paenga-whawha", "Haratua", "Pipiri", 
+            "Hongongoi", "Here-turi-koka", "Mahuru", "Whiringa-a-nuku", "Whiringa-a-rangi", "Hakihea"],
+            'german': ["Januar", "Februar", "Marz", "April", "Mai", "Juni", "Juli", 
+            "August", "September", "Oktober", "November", "Dezember"]
         }
 
         MagicNo = 0x497E.to_bytes(2, 'big')
@@ -200,9 +196,9 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
     """
     IP = socket.gethostbyname('localhost')
 
-    s_english = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # set to grab IPv4 and socket_stream is to create TCP protocols
-    s_maori = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # set to grab IPv4 and socket_stream is to create TCP protocols
-    s_german = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # set to grab IPv4 and socket_stream is to create TCP protocols
+    s_english = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
+    s_maori = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)    
+    s_german = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     server_sockets = [[s_english, PORT_english], [s_maori, PORT_maori], [s_german, PORT_german]]
 
@@ -254,7 +250,8 @@ def Main():
     parser.add_argument("PORT_English", help="The Port number to grab date/time in English.", type=int)
     parser.add_argument("PORT_Maori", help="The Port number to grab date/time in Te Aro Maori.", type=int)
     parser.add_argument("PORT_German", help="The port number to grab date/time in German.", type=int)
-    parser.add_argument("-v", "--verbose", action="store_true", help="verbose output: view client requests and where they are comming from")
+    parser.add_argument("-v", "--verbose", action="store_true", \
+                help="verbose output: view client requests and where they are comming from")
 
     args = parser.parse_args()
     if args.verbose:
@@ -274,9 +271,10 @@ import argparse
 
 def start_client(DATE, HOST, PORT, verbose):
     """
-    This function is the main function in order to setup the client. The function contains many sub-functions used for finding
-    parameters nessasary to display the desired output, the body of this function contains the steps to produce a client and
-    calls the nessasary sub-functions to send a request to the server.
+    This function is the main function in order to setup the client. The function 
+    contains many sub-functions used for finding parameters nessasary to display 
+    the desired output, the body of this function contains the steps to produce a 
+    client and calls the nessasary sub-functions to send a request to the server.
     """
     try:
         IP = socket.gethostbyname(HOST)
@@ -396,7 +394,7 @@ def start_client(DATE, HOST, PORT, verbose):
             print("The `date` parameter must be set to either `date` or `time`")
             return -1
         else:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # set to grab IPv4 and socket_stream is to create TCP protocols
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
             s.settimeout(1)
             s.sendto(request_packet, (IP, PORT))
 
@@ -432,7 +430,8 @@ def Main():
     parser.add_argument("MSG", help="The message to receive from server must be `date` or `time`", type=str)
     parser.add_argument("HOST", help="The Hostname to connect to", type=str)
     parser.add_argument("PORT", help="The Port number to connect to", type=int)
-    parser.add_argument("-v", "--verbose", action="store_true", help="verbose output: full output of packet recieved")
+    parser.add_argument("-v", "--verbose", action="store_true", \
+                                help="verbose output: full output of packet received")
 
     args = parser.parse_args()
 
