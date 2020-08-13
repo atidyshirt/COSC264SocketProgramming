@@ -10,6 +10,7 @@ Name:       Jordan Pyott
 
 StudentID:  87433186
 
+</center>
 
 ---
 
