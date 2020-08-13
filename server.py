@@ -186,7 +186,8 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
                     s.sendto(bytes(msg))
                     s.close()
         except KeyboardInterrupt:
-                print ("Closing Server...")
+                print ("")
+                print ("Closing Sockets...")
                 for s in sockets:
                     s.close()
                 print("Server Closed")
