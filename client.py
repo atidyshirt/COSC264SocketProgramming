@@ -2,7 +2,11 @@ import socket
 import argparse
 
 def start_client(DATE, HOST, PORT, verbose):
-
+    """
+    This function is the main function in order to setup the client. The function contains many sub-functions used for finding
+    parameters nessasary to display the desired output, the body of this function contains the steps to produce a client and
+    calls the nessasary sub-functions to send a request to the server.
+    """
     try:
         IP = socket.gethostbyname(HOST)
     except socket.gaierror:
@@ -10,6 +14,7 @@ def start_client(DATE, HOST, PORT, verbose):
         return -1
 
     def checkInputs(DATE, IP, PORT):
+        """ Checks the intergrity of inputs and if they comply to the specifications """
         if not IP:
             print("The Hostname is invalid")
             return False
@@ -22,6 +27,12 @@ def start_client(DATE, HOST, PORT, verbose):
         return True
 
     def decrypt_message(packet):
+        """
+        Takes in a packet in the form of a byte array, and decrypts it to pull the relevent data
+        that will later be displayed to the client.
+
+        Note: This has a --verbose flag to get the full contents of the packet.
+        """
         info = [packet[i:i+1] for i in range(0, len(packet), 1)]
         if len(info) < 13:
             print("Packet does not include minimum headersize")
@@ -88,7 +99,7 @@ def start_client(DATE, HOST, PORT, verbose):
 
     def format_request(Date):
         """
-        Formats the packet into the desired format
+        Formats the packet into a byte array to send to the server.
         """
         MagicNo = 0x497E
         PacketType = 0x0001
@@ -98,53 +109,51 @@ def start_client(DATE, HOST, PORT, verbose):
             RequestType = 0x0002
         else:
             return -1
-        bytelist = []
-        bytelist.append(MagicNo.to_bytes(2, 'big'))
-        bytelist.append(PacketType.to_bytes(2, 'big'))
-        bytelist.append(RequestType.to_bytes(2, 'big'))
+        bytelist = [MagicNo.to_bytes(2, 'big'), PacketType.to_bytes(2, 'big'), RequestType.to_bytes(2, 'big')]
+
         arrayBytes = bytearray()
+
         for x in bytelist:
             arrayBytes += x
+
         return arrayBytes
 
     if checkInputs(DATE, IP, PORT):
+        """ Checks if the input date/time is valid """
         request_packet = format_request(DATE)
         if request_packet == -1:
             print("The `date` parameter must be set to either `date` or `time`")
-
+            return -1
         else:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # set to grab IPv4 and socket_stream is to create TCP protocols
+            s.settimeout(1)
+            s.sendto(request_packet, (IP, PORT))
 
-                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # set to grab IPv4 and socket_stream is to create TCP protocols
-                s.settimeout(1)
-                s.sendto(request_packet, (IP, PORT))
+            complete_message = bytearray()
 
-                complete_message = bytearray()
+        while True:
+            try:
+                msg, source = s.recvfrom(1024)
 
-                while True:
-                    #  read, write, exception = select.select(sockets, [], [])
+                if len(msg) <= 0:
+                    break
 
-                    try:
-                        msg, source = s.recvfrom(1024)
+                complete_message += msg
 
-                        if len(msg) <= 0:
-                            break
+            except socket.timeout:
+                print(f"Client timeout: Could not connect to ({HOST}:{PORT})")
+                break
 
-                        complete_message += msg
+            except socket.error:
+                print(f"Client timeout: Could not connect to ({HOST}:{PORT})")
+                break
 
-                    except socket.timeout:
-                        print(f"Client timeout: Could not connect to ({HOST}:{PORT})")
-                        break
-
-                    except socket.error:
-                        print(f"Client timeout: Could not connect to ({HOST}:{PORT})")
-                        break
-
-                    result = decrypt_message(complete_message)
-                    if result != -1:
-                        print(result)
-                        break
-                    s.close()
-                    return result
+            result = decrypt_message(complete_message)
+            if result != -1:
+                print(result)
+                break
+            s.close()
+            return result
 
 
 def Main():
