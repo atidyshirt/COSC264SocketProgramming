@@ -1,7 +1,7 @@
 import socket
 import argparse
 
-def start_client(DATE, HOST, PORT):
+def start_client(DATE, HOST, PORT, verbose):
 # These are the inputs
     IP = socket.gethostbyname(HOST)
 
@@ -24,7 +24,7 @@ def start_client(DATE, HOST, PORT):
             return -1
 
         MagicNo = int.from_bytes(info[0] + info[1], 'big')
-        
+
         if MagicNo != 0x497E:
             print("MagicNo is incorrect: `{}` recieved, must equal `0x497E`".format(MagicNo))
             return -1
@@ -64,6 +64,21 @@ def start_client(DATE, HOST, PORT):
         if len(info) != 13 + Length:
             print("Length of packet does not match packet received")
             return -1
+
+        if verbose:
+            print("---------------------------------------")
+            print(f"MagicNo: {hex(MagicNo)}")
+            print(f"PacketType: {hex(PacketType)}")
+            print(f"LanguageCode: {hex(LanguageCode)}")
+            print(f"Year: {Year}")
+            print(f"Month: {Month}")
+            print(f"Day: {Day}")
+            print(f"Hour {Hour}")
+            print(f"Minute: {Minute}")
+            print(f"Length: {Length}")
+            print(f"Text: {text}")
+            print("---------------------------------------")
+            print("")
 
         return text
 
@@ -125,6 +140,7 @@ def start_client(DATE, HOST, PORT):
                         print(result)
                         break
                     s.close()
+                    return result
 
 
 def Main():
@@ -132,9 +148,14 @@ def Main():
     parser.add_argument("MSG", help="The message to receive from server must be `date` or `time`", type=str)
     parser.add_argument("HOST", help="The Hostname to connect to", type=str)
     parser.add_argument("PORT", help="The Port number to connect to", type=int)
+    parser.add_argument("-v", "--verbose", action="store_true", help="verbose output: full output of packet recieved")
 
     args = parser.parse_args()
-    start_client(args.MSG, args.HOST, args.PORT)
+
+    if args.verbose:
+        start_client(args.MSG, args.HOST, args.PORT, verbose=True)
+    else:
+        start_client(args.MSG, args.HOST, args.PORT, verbose=False)
 
 if __name__ == "__main__":
     Main()

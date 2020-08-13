@@ -3,7 +3,7 @@ import select
 import argparse
 import datetime
 
-def start_server(PORT_english, PORT_maori, PORT_german):
+def start_server(PORT_english, PORT_maori, PORT_german, verbose):
 # SERVERSIDE FUNCTIONS
     def check_port(PORT):
         if PORT < 1024 or PORT > 64000:
@@ -155,7 +155,8 @@ def start_server(PORT_english, PORT_maori, PORT_german):
         read, write, exception = select.select(sockets, [], [])
         for s in read:
             packet, source = s.recvfrom(48)
-            print(f"Packet recieved from {source}")
+            if verbose:
+                print(f"Packet recieved from {source}")
             if packetCheck(packet):
                 if checkRequestType(packet) == 'date':
                     msg = getDate(s)
@@ -178,9 +179,14 @@ def Main():
     parser.add_argument("PORT_English", help="The Port number to grab date/time in English.", type=int)
     parser.add_argument("PORT_Maori", help="The Port number to grab date/time in Te Aro Maori.", type=int)
     parser.add_argument("PORT_German", help="The port number to grab date/time in German.", type=int)
+    parser.add_argument("-v", "--verbose", action="store_true", help="verbose output: view client requests and where they are comming from")
 
     args = parser.parse_args()
-    start_server(args.PORT_English, args.PORT_Maori, args.PORT_German)
+
+    if args.verbose:
+        start_server(args.PORT_English, args.PORT_Maori, args.PORT_German, verbose=True)
+    else:
+        start_server(args.PORT_English, args.PORT_Maori, args.PORT_German, verbose=False)
 
 if __name__ == "__main__":
     Main()
