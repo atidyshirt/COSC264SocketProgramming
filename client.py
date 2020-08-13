@@ -2,12 +2,16 @@ import socket
 import argparse
 
 def start_client(DATE, HOST, PORT, verbose):
-# These are the inputs
-    IP = socket.gethostbyname(HOST)
+
+    try:
+        IP = socket.gethostbyname(HOST)
+    except socket.gaierror:
+        print(f"Hostname not found: Check {HOST} is correct")
+        return -1
 
     def checkInputs(DATE, IP, PORT):
         if not IP:
-            print("The IP address is not specified")
+            print("The Hostname is invalid")
             return False
         if PORT < 1024 or PORT > 64000:
             print("The Port number is not within specified range (1024:64000)")
