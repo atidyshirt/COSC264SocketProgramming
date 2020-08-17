@@ -11,6 +11,10 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
     with the --verbose flag in order to see the options and arguments, run `server.py --help` for more information`.
     """
 
+    if PORT_english in {PORT_maori, PORT_german} or PORT_maori in {PORT_english, PORT_german} or PORT_german in {PORT_english, PORT_maori}:
+        print("Ports cannot be identical")
+        return -1
+
     def check_port(PORT):
         """ Checks the port and makes sure it complies to requirements (1024 - 64000) """
         if PORT < 1024 or PORT > 64000:
