@@ -209,7 +209,7 @@ def start_server(PORT_english, PORT_maori, PORT_german, verbose):
 
         return out
 
-    """ 
+    """
     Here is where we implement the Socket API. This is the main setup for the server to receive and send
     the appropriate packets.
     """
